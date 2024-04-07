@@ -35,10 +35,24 @@
         <action
             android:id="@+id/action_fragmentMain_to_fragmentLogin"
             app:destination="@id/fragmentLogin" />
+        <action
+            android:id="@+id/action_fragmentMain_to_ratingPopupFragment"
+            app:destination="@id/ratingPopupFragment" />
+        <action
+            android:id="@+id/action_fragmentMain_to_sitterInfoFragment"
+            app:destination="@id/sitterInfoFragment" />
     </fragment>
     <fragment
         android:id="@+id/fragmentProfile"
         android:name="com.example.finalproject_androidstudio.fragments.FragmentProfile"
         android:label="fragment_profile"
         tools:layout="@layout/fragment_profile" />
+    <fragment
+        android:id="@+id/sitterInfoFragment"
+        android:name="com.example.finalproject_androidstudio.fragments.SitterInfoFragment"
+        android:label="SitterInfoFragment" />
+    <fragment
+        android:id="@+id/ratingPopupFragment"
+        android:name="com.example.finalproject_androidstudio.fragments.RatingPopupFragment"
+        android:label="RatingPopupFragment" />
 </navigation>
