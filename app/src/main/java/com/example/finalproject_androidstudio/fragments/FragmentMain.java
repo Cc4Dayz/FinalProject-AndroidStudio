@@ -102,7 +102,14 @@ public class FragmentMain extends Fragment {
         greetingText = view.findViewById(R.id.greeting_text);
 
 
-        DatabaseReference userRef = FirebaseDatabase.getInstance().getReference("users").child(FirebaseAuth.getInstance().getCurrentUser().getUid());
+        DatabaseReference userRef = null;
+//        DatabaseReference userRef = FirebaseDatabase.getInstance().getReference("users").child(FirebaseAuth.getInstance().getCurrentUser().getEmail());
+        String userEmail = FirebaseAuth.getInstance().getCurrentUser().getEmail();
+        if (userEmail != null) {
+            String sanitizedEmail = sanitizeEmail(userEmail);
+            userRef = FirebaseDatabase.getInstance().getReference("users").child(sanitizedEmail);
+            // Now use 'ref' to read or write data
+        }
         userRef.addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
@@ -256,4 +263,12 @@ public class FragmentMain extends Fragment {
             }
         });
     }
+
+    private String sanitizeEmail(String email) {
+        if (email != null) {
+            return email.replace(".", ",");
+        }
+        return null;
+    }
+
 }

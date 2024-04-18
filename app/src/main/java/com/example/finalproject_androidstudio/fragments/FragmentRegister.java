@@ -19,6 +19,7 @@ import android.widget.DatePicker;
 import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
+import android.widget.TextView;
 import android.widget.Toast;
 import android.Manifest;
 import androidx.annotation.NonNull;
@@ -56,7 +57,7 @@ public class FragmentRegister extends Fragment {
     private Button registerButton;
     private Button returnButton;
     private View rootView;
-    private EditText selectedDateEditText;
+    private TextView selectedDateEditText;
     private TextInputLayout selectedDateInputLayout;
 
     private static final int PHOTO_PICK_REQUEST_CODE = 1;
@@ -84,12 +85,30 @@ public class FragmentRegister extends Fragment {
         selectedDateEditText = rootView.findViewById(R.id.regEditTextSelectedDate);
 
         // Set OnClickListener to show DatePickerDialog
-        selectedDateInputLayout.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                showDatePickerDialog();
-            }
+        selectedDateEditText.setOnClickListener(v -> {
+            Log.d("DatePicker", "EditText clicked");
+            showDatePickerDialog();
         });
+        DatePickerDialog.OnDateSetListener dateSetListener = new DatePickerDialog.OnDateSetListener() {
+            @Override
+            public void onDateSet(DatePicker view, int year, int monthOfYear, int dayOfMonth) {
+                Calendar dob = Calendar.getInstance();
+                Calendar today = Calendar.getInstance();
+
+                dob.set(year, monthOfYear, dayOfMonth);
+
+                int age = today.get(Calendar.YEAR) - dob.get(Calendar.YEAR);
+
+                if (today.get(Calendar.DAY_OF_YEAR) < dob.get(Calendar.DAY_OF_YEAR)) {
+                    age--;
+                }
+
+                if (age < 16) {
+                    Toast.makeText(getContext(), "You must be at least 16 years old.", Toast.LENGTH_LONG).show();
+                }
+            }
+        };
+
 
         return rootView;
     }
@@ -111,16 +130,6 @@ public class FragmentRegister extends Fragment {
         initPhotoButtons(view);
         initSpinners(view);
 
-//        regBabysitterCheckBox.setOnCheckedChangeListener((buttonView, isChecked) -> {
-//            if (isChecked) {
-//                ActivityCompat.requestPermissions(getActivity(), new String[]{Manifest.permission.CAMERA, Manifest.permission.WRITE_EXTERNAL_STORAGE}, PERMISSION_REQUEST_CODE);
-//                regBabysitterForm.setVisibility(View.VISIBLE);{
-//                }
-//            } else {
-//                regBabysitterForm.setVisibility(View.GONE);
-//            }
-//        });
-
         regBabysitterCheckBox.setOnCheckedChangeListener((buttonView, isChecked) -> {
             if (isChecked) {
                 ActivityCompat.requestPermissions(getActivity(), new String[]{Manifest.permission.CAMERA, Manifest.permission.WRITE_EXTERNAL_STORAGE}, PERMISSION_REQUEST_CODE);
@@ -130,11 +139,6 @@ public class FragmentRegister extends Fragment {
                 regBabysitterForm.setVisibility(View.GONE);
             }
         });
-
-
-
-
-
 
         // Set click listeners
         registerButton.setOnClickListener(new View.OnClickListener() {
@@ -362,8 +366,6 @@ public void onRequestPermissionsResult(int requestCode, @NonNull String[] permis
         babysitter.setKidsAgeRange(kidsAge);
         babysitter.setSalary(salary);
 
-        // Set other specific fields of Babysitter here
-
         return babysitter;
     }
 
@@ -416,9 +418,6 @@ public void onRequestPermissionsResult(int requestCode, @NonNull String[] permis
         datePickerDialog.show();
     }
 
-    // Assuming this method is inside an activity or fragment
-    // Assuming this method is inside an activity or fragment
-    // Assuming this method is inside a fragment
     private void saveUserDataToRealtimeDatabase(FirebaseUser firebaseUser, User user) {
         // Find the NavController associated with the activity
         NavController navController = Navigation.findNavController(requireActivity(), R.id.fragmentContainerView);
